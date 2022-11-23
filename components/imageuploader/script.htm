@@ -1,0 +1,42 @@
+{% put scripts %}
+<script>
+    let usesEditor = false;
+    setTimeout(() => {
+        if (window.editor !== undefined) {
+            usesEditor = true;
+            if (editor._ignition.state() === "ready") {
+                document.querySelectorAll('.js-uploader').forEach(el => {
+                    el.style.display = 'none';
+                });
+            }
+            editor.addEventListener('start', () => {
+                document.querySelectorAll('.js-uploader').forEach(el => {
+                    el.style.display = 'block';
+                });
+            });
+            editor.addEventListener('stopped', () => {
+                document.querySelectorAll('.js-uploader').forEach(el => {
+                    el.style.display = 'none';
+                });
+            });
+        }
+    }, 500);
+    let element = UIkit.upload('.js-upload', {
+        url: '/contenteditor/uploader/image',
+        multiple: false,
+        name: 'image[]',
+        beforeAll: component => {
+            element = component.$el;
+            component.params = {item: element.getAttribute('id')};
+        },
+        completeAll: xhr => {
+            if (element.classList.contains('uses-image')) {
+                element.querySelector('img').src = JSON.parse(xhr.response).url;
+            } else {
+                element.style.backgroundImage = `url(${JSON.parse(xhr.response).url})`;
+            }
+            UIkit.notification('{{'kosmoskosmos.bettercontenteditor::lang.imageuploader.success'|trans}}');
+        }
+    });
+</script>
+{% endput %}

@@ -1,0 +1,20 @@
+{% if __SELF__.renderCount == 1 %}{% partial __SELF__~'::script' %}{% endif %}
+
+    {% if bce.tag == 'img' %}
+
+    <div id="{{bce.item}}" class="{{bce.classes}} uk-cover-container js-upload uk-text-center uses-image">
+        <img src="{{ bce.image }}" {{bce.attributes}} uk-cover>
+        <img src="{{ bce.image }}" alt="{{bce.fileName}}">
+        {% partial __SELF__~'::uploader' %}
+    </div>
+
+    {% else %}
+
+    <div id="{{bce.item}}" {{bce.attributes}} class="js-upload uk-text-center {{bce.classes}}" style="background-image: url({{ bce.image }})">
+        {% partial __SELF__~'::uploader' %}
+        {% if not bce.leaveOpen %}
+    </div>
+
+    {% endif %}
+
+{% endif %}

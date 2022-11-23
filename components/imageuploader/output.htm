@@ -1,0 +1,9 @@
+<{{bce.tag}}
+    class="{{bce.classes}}"
+    {{bce.attributes}}
+    data-src="{{ bce.image }}"
+    alt="{{bce.fileName}}"
+    uk-img>
+{% if not bce.leaveOpen and bce.tag != 'img' %}
+</{{bce.tag}}>
+{% endif %}

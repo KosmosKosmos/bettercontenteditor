@@ -1,0 +1,11 @@
+1.0.1:
+  - Initialize plugin.
+  - create_images_table.php
+1.0.2:
+  - Add revisions.
+  - create_revisions_table.php
+1.0.3: Latest bugfixe
+1.0.4: Cache Images
+1.0.5: Add requirement for ToughDeveloper.ImageResizer
+1.0.6: Only cache images if in production mode
+1.0.7: Only allow specific user to access image-uploader
