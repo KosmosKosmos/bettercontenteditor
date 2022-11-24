@@ -4,8 +4,6 @@
 
 tabs:
     fields:
-
-        ####
         enabled_buttons:
             tab: kosmoskosmos.bettercontenteditor::lang.settings.main_settings
             span: left
@@ -16,8 +14,16 @@ tabs:
             span: right
             label: kosmoskosmos.bettercontenteditor::lang.settings.image_folder
             commentAbove: kosmoskosmos.bettercontenteditor::lang.settings.image_folder_comment
-            default: 'contenteditor'
-
+            default: contenteditor
+            placeholder: contenteditor
+        default_image:
+            tab: kosmoskosmos.bettercontenteditor::lang.settings.main_settings
+            span: right
+            type: fileupload
+            mode: image
+            label: kosmoskosmos.bettercontenteditor::lang.settings.image_folder
+            commentAbove: kosmoskosmos.bettercontenteditor::lang.settings.image_folder_comment
+            default: '/plugins/kosmoskosmos/bettercontenteditor/assets/images/placeholder.jpg'
         ####
         style_palettes:
             tab: kosmoskosmos.bettercontenteditor::lang.settings.style_palettes

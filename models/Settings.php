@@ -1,30 +1,35 @@
 <?php namespace KosmosKosmos\BetterContentEditor\Models;
 
-use File;
+use Illuminate\Support\Facades\DB;
 use Lang;
 use Model;
-use Less_Parser;
 use Cache;
+use Less_Parser;
 use System\Behaviors\SettingsModel;
+use System\Models\File;
 
-class Settings extends Model
-{
-    public $implement = ['System.Behaviors.SettingsModel'];
+class Settings extends Model {
 
+    public $implement = [SettingsModel::class];
     public $settingsCode = 'kosmoskosmos_bettercontenteditor_settings';
-
     public $settingsFields = 'fields.yaml';
+
+    public $attachOne = [
+        'default_image' => File::class
+    ];
+
+    public static function getDefaultImage() {
+        $file = File::where('attachment_type', self::class)->where('field', 'default_image')->first();
+        return $file ? $file->getPath() : '/plugins/kosmoskosmos/bettercontenteditor/assets/images/placeholder.jpg';
+    }
 
     const CACHE_KEY = 'kosmoskosmos.bettercontenteditor.additional_styles';
 
-    public function initSettingsData()
-    {
+    public function initSettingsData() {
         $this->additional_styles = File::get(plugins_path() . '/kosmoskosmos/bettercontenteditor/assets/additional-css.css');
     }
 
-    // list of buttons
-    public function getEnabledButtonsOptions()
-    {
+    public function getEnabledButtonsOptions() {
         return [
             'bold'           => 'Bold (b)',
             'italic'         => 'Italic (i)',
@@ -57,8 +62,7 @@ class Settings extends Model
     }
 
     // list of allowed tags
-    public function getAllowedTagsOptions()
-    {
+    public function getAllowedTagsOptions() {
         return [
             'p',
             'img',
@@ -80,13 +84,11 @@ class Settings extends Model
         ];
     }
 
-    public function afterSave()
-    {
+    public function afterSave() {
         Cache::forget(self::CACHE_KEY);
     }
 
-    public static function renderCss()
-    {
+    public static function renderCss() {
         if (Cache::has(self::CACHE_KEY)) {
             return Cache::get(self::CACHE_KEY);
         }
@@ -99,8 +101,7 @@ class Settings extends Model
         return $customCss;
     }
 
-    public static function compileCss()
-    {
+    public static function compileCss() {
         $parser = new Less_Parser(['compress' => true]);
         $customStyles = self::get('additional_styles');
         $parser->parse($customStyles);
