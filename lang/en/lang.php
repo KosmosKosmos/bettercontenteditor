@@ -20,6 +20,35 @@ return [
         'additional_styles'       => 'Additional CSS',
         'additional_styles_label' => 'Addional styles that are included in website. Possibility to use CSS or LESS.'
     ],
+    'styles' => [
+        'bold'           => 'Bold (b)',
+        'italic'         => 'Italic (i)',
+        'link'           => 'Link (a)',
+
+        'align-left'     => 'Align left',
+        'align-center'   => 'Align center',
+        'align-right'    => 'Align right',
+
+        'heading'        => 'Heading (h1)',
+        'subheading'     => 'Subheading (h2)',
+
+        'subheading3'    => 'Subheading3 (h3)',
+        'subheading4'    => 'Subheading4 (h4)',
+        'subheading5'    => 'Subheading5 (h5)',
+
+        'paragraph'      => 'Paragraph (p)',
+        'unordered-list' => 'Unordered list (ul)',
+        'ordered-list'   => 'Ordered list (ol)',
+
+        'table'          => 'Table',
+        'indent'         => 'Indent',
+        'unindent'       => 'Unindent',
+        'line-break'     => 'Line-break (br)',
+
+        'image'          => 'Image upload',
+        'video'          => 'Video',
+        'preformatted'   => 'Preformatted (pre)',
+    ],
     'translations' => [
         'addContent' => 'add content here',
         'changesSaved' => 'Your changes have been saved',

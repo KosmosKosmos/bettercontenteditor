@@ -7,7 +7,8 @@ tabs:
         enabled_buttons:
             tab: kosmoskosmos.bettercontenteditor::lang.settings.main_settings
             span: left
-            label: kosmoskosmos.bettercontenteditor::lang.settings.main_settings
+            label: kosmoskosmos.bettercontenteditor::lang.settings.options
+            commentAbove: kosmoskosmos.bettercontenteditor::lang.settings.options_comment
             type: checkboxlist
         image_folder:
             tab: kosmoskosmos.bettercontenteditor::lang.settings.main_settings
@@ -21,8 +22,8 @@ tabs:
             span: right
             type: fileupload
             mode: image
-            label: kosmoskosmos.bettercontenteditor::lang.settings.image_folder
-            commentAbove: kosmoskosmos.bettercontenteditor::lang.settings.image_folder_comment
+            label: kosmoskosmos.bettercontenteditor::lang.settings.default_image
+            commentAbove: kosmoskosmos.bettercontenteditor::lang.settings.default_image_comment
             default: '/plugins/kosmoskosmos/bettercontenteditor/assets/images/placeholder.jpg'
         ####
         style_palettes:
