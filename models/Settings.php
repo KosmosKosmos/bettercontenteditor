@@ -1,12 +1,12 @@
 <?php namespace KosmosKosmos\BetterContentEditor\Models;
 
-use Illuminate\Support\Facades\DB;
+use File;
 use Lang;
 use Model;
 use Cache;
 use Less_Parser;
+use System\Models\File as DbFile;
 use System\Behaviors\SettingsModel;
-use System\Models\File;
 
 class Settings extends Model {
 
@@ -15,11 +15,11 @@ class Settings extends Model {
     public $settingsFields = 'fields.yaml';
 
     public $attachOne = [
-        'default_image' => File::class
+        'default_image' => DbFile::class
     ];
 
     public static function getDefaultImage() {
-        $file = File::where('attachment_type', self::class)->where('field', 'default_image')->first();
+        $file = DbFile::where('attachment_type', self::class)->where('field', 'default_image')->first();
         return $file ? $file->getPath() : '/plugins/kosmoskosmos/bettercontenteditor/assets/images/placeholder.jpg';
     }
 
