@@ -1,9 +1,11 @@
 <?php namespace KosmosKosmos\BetterContentEditor\Controllers;
 
+use Log;
 use File;
 use Input;
 use Cache;
 use Config;
+use Resizer;
 use Response;
 use Exception;
 use BackendAuth;
@@ -12,8 +14,6 @@ use Media\Classes\MediaLibrary;
 use Illuminate\Routing\Controller;
 use Cms\Helpers\File as FileHelper;
 use October\Rain\Support\Facades\Str;
-use October\Rain\Database\Attach\Resizer;
-use KosmosKosmos\BetterContentEditor\Models\Images;
 use KosmosKosmos\BetterContentEditor\Models\Settings;
 
 class ImageController extends Controller {
@@ -24,46 +24,43 @@ class ImageController extends Controller {
         $this->middleware('web');
     }
 
-    public function upload() {
+    public function imageUploaderUpload() {
         if (BackendAuth::getUser()) {
             try {
                 if (!Input::hasFile('image')) {
                     throw new ApplicationException('File missing from request');
                 }
-
                 $uploadedFile = Input::file('image')[0];
-                $fileName = $uploadedFile->getClientOriginalName();
-
-                // Convert uppcare case file extensions to lower case
-                $extension = strtolower($uploadedFile->getClientOriginalExtension());
-                $fileName = File::name($fileName).'.'.$extension;
-
-                // File name contains non-latin characters, attempt to slug the value
-                if (!FileHelper::validateName($fileName)) {
-                    $fileNameSlug = Str::slug(File::name($fileName), '-');
-                    $fileName = $fileNameSlug.'.'.$extension;
-                }
                 if (!$uploadedFile->isValid()) {
                     throw new ApplicationException($uploadedFile->getErrorMessage());
                 }
+                $extension = strtolower($uploadedFile->getClientOriginalExtension());
 
-                $path = Settings::get('image_folder', 'contenteditor');
-                $path = MediaLibrary::validatePath($path);
-                $mediaLibrary = MediaLibrary::instance();
-                $basePath = rtrim(Config::get('system.storage.media.path', '/storage/app/media'), '/');
+                $file = Input::get('file');
+                $key = Input::get('key');
 
-                $mediaLibrary->put($path.'/'.$fileName, File::get($uploadedFile->getRealPath()));
-                $url = $basePath . implode('/', array_map('rawurlencode', explode('/', $path))).'/'.$fileName;
+                $basePath = ltrim(rtrim(Config::get('system.storage.media.path', '/storage/app/media'), '/'), '/');
+                $uploadPath = Settings::get('image_folder', 'contenteditor');
+                $base = $basePath.'/'.$uploadPath;
+                $path = $base.'/'.$file;
+                $pathWithoutFile = substr($path, 0, -strlen(basename($file)));
+                if (!file_exists(base_path($pathWithoutFile))) {
+                    mkdir(base_path($pathWithoutFile));
+                }
+                $url = $path.'.'.$extension;
+
+                $files = glob($path.'*');
+                $filePath = count($files) ? $files[0] : null;
+                if ($filePath) {
+                    unlink($filePath);
+                }
+                file_put_contents(base_path($url), File::get($uploadedFile->getRealPath()));
 
                 list($width, $height) = getimagesize($uploadedFile);
-
-                $item = Images::firstOrCreate(['item' => Input::input('item')]);
-                $item->url = $url;
-                $item->save();
-                Cache::forget(Input::input('item'));
+                Cache::forget($key);
                 return Response::json([
-                    'url'      => $url,
-                    'filename' => $fileName,
+                    'url'      => '/'.$url,
+                    'filename' => 'sdfds',
                     'size'     => [
                         $width,
                         $height
@@ -73,7 +70,6 @@ class ImageController extends Controller {
             catch (Exception $ex) {
                 return $ex;
             }
-
         }
     }
 

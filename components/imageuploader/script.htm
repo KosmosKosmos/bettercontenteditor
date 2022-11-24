@@ -21,13 +21,32 @@
             });
         }
     }, 500);
+    function sendOctoberFiles(requestName, data) {
+        return new Promise((resolve, reject) => {
+            $.request(requestName, {
+                data: data,
+                files: true,
+                error: jqXHR => {
+                    reject(jqXHR.responseJSON ? jqXHR.responseJSON : jqXHR);
+                },
+                success: (data) => {
+                    resolve(data);
+                },
+                complete: () => {
+                }
+            });
+        });
+    }
     let element = UIkit.upload('.js-upload', {
         url: '/contenteditor/uploader/image',
         multiple: false,
         name: 'image[]',
         beforeAll: component => {
             element = component.$el;
-            component.params = {item: element.getAttribute('id')};
+            component.params = {
+                file: component.$el.getAttribute('id'),
+                key: element.dataset.key
+            };
         },
         completeAll: xhr => {
             if (element.classList.contains('uses-image')) {

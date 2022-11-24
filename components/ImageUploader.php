@@ -2,6 +2,7 @@
 
 use Log;
 use Str;
+use Input;
 use Cache;
 use Config;
 use Resizer;
@@ -31,38 +32,41 @@ class ImageUploader extends ComponentBase {
     }
 
     public function onRender() {
-//        Cache::forget($this->themeID.$this->property('item'));
-        $this->page['bce'] = Config::get('app.debug')
-            ? $this->getItem()
-            : Cache::rememberForever($this->themeID.$this->property('item'), function() {
-                return $this->getItem();
-            });
-
+        $file = $this->property('file');
+        $key = implode('-', $this->getProperties());
+        $this->page['bce'] = Cache::rememberForever($key, fn() =>$this->getItem($file, $key));
         $this->renderCount += 1;
     }
 
-    private function getItem() {
-        $item = $this->themeID.$this->property('item');
-        $urls = Images::where('item', $item)->pluck('url');
-        $image = $urls->count() > 0 ? $urls[0] : null;
-        $size = $this->property('size') ?? 1300;
+    private function getItem($file, $key) {
+        $basePath = base_path(ltrim(rtrim(Config::get('system.storage.media.path', '/storage/app/media'), '/'), '/'));
+        $uploadPath = Settings::get('image_folder', 'contenteditor');
+        $base = $basePath.'/'.$uploadPath;
+        $path = $base.'/'.$file;
+        $files = glob($path.'*');
+        $filePath = count($files) ? $files[0] : null;
+
         $defaultImage = $this->property('default') ?? '/plugins/kosmoskosmos/bettercontenteditor/assets/images/placeholder.jpg';
         $fileName = 'Placeholder';
-        if ($image) {
-            if (Str::endsWith($image, '.svg')) {
-                $fileName = substr($image, strrpos($image, '/') + 1);
+        if ($filePath) {
+            $width = $this->property('width') ?? ($this->property('size') ?? 1300);
+            $height = $this->property('height');
+            $mode = $this->property('mode') ?? 'auto';
+            $quality = $this->property('quality') ?? 79;
+            if (Str::endsWith($filePath, '.svg')) {
+                $fileName = substr($filePath, strrpos($filePath, '/') + 1);
             } else {
-                $path = Settings::get('image_folder', 'contenteditor');
-                $basePath = rtrim(Config::get('system.storage.media.path', '/storage/app/media'), '/');
-                $imageResize = Resizer::open(base_path($image));
-                $imageResize = $imageResize->resize(null, $size, ['mode' => 'auto']);
-                $fileName = str_replace($basePath . '/' . $path . '/', '', $image);
-                $fileName = substr($fileName, 0, strrpos($fileName, '.'));
-                $image = $imageResize->__toString();
+                $fileName = basename($filePath);
+                $fileUrl = ltrim((Config::get('system.storage_path') ?? '/storage'), '/').'/temp/public/'.$fileName;
+                $imageResize = Resizer::open($filePath);
+                $imageResize = $imageResize->resize($width, $height, ['mode' => $mode, 'quality' => $quality]);
+                $imageResize->save(base_path($fileUrl));
+                $image = '/'.$fileUrl;
             }
         }
         $result = [
-            'item' => $item,
+            'key' => $key,
+            'item' => $file,
             'image' => $image ?? $defaultImage,
             'classes' => $this->property('class') ?? 'uk-background-cover uk-height-large uk-position-relative',
             'tag' => $this->property('tag') ?? 'img',
