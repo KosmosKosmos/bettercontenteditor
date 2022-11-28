@@ -30,7 +30,7 @@ class Settings extends Model {
     const CACHE_KEY = 'kosmoskosmos.bettercontenteditor.additional_styles';
 
     public function initSettingsData() {
-        $this->additional_styles = File::get(plugins_path() . '/kosmoskosmos/bettercontenteditor/assets/additional-css.css');
+        $this->additional_styles = file_get_contents(plugins_path() . '/kosmoskosmos/bettercontenteditor/assets/additional-css.css');
     }
 
     public function getEnabledButtonsOptions() {
