@@ -1,6 +1,5 @@
 import Vue from 'vue$';
 import UIkit from 'uikit';
-import RevisionTool from './RevisionTool';
 import './contenteditor.scss';
 import './samuell.js';
 
@@ -20,7 +19,7 @@ new Vue({
             this.askToClose();
             return false;
         });
-        
+
         editor.addEventListener('saved', ev => {
             editor.busy(true);
             const regions = ev.detail().regions;

@@ -1,2 +1,7 @@
 2.0.0: Make Image-Uploader work with october3
 2.0.1: Add settings for default image
+2.0.2:
+    - Only add language suffix if needed (there are more than one active language)
+    - Remove file if content is empty
+    - Add support for page variables that can be bound via {{page-variable}} and be set via $this->page->available_vars
+    - Update style

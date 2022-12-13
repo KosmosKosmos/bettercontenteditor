@@ -6,10 +6,9 @@
     data-name="{{ __SELF__.file }}"
     {% if __SELF__.class %}class="{{ __SELF__.class }}"{% endif %}>
     {% if (__SELF__.content|raw) == '' %}
-        {% if __SELF__.fixture %}
-            ...{{localisations['addContent']}}...
-        {% else %}
-        <p>...{{localisations['addContent']}}...</p>
+        {% if not __SELF__.fixture %}
+            <p>
+            </p>
         {% endif %}
     {% else %}
     {{__SELF__.content|raw}}
@@ -23,7 +22,6 @@
     {% put scripts %}
     <script type="text/javascript">
         document.lang = '{{ lang }}';
-        document.logout = '{{ __SELF__ }}::onSignout';
     </script>
     <script type="text/javascript">document.contentEditorTranslations = {{ localisations | json_encode | raw}};</script>
     <script type="text/javascript" src="/plugins/kosmoskosmos/bettercontenteditor/assets/content-tools.min.js"></script>

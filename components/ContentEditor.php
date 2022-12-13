@@ -5,8 +5,6 @@ use App;
 use Lang;
 use File;
 use Cache;
-use Session;
-use Redirect;
 use BackendAuth;
 use Cms\Classes\Content;
 use Cms\Classes\ComponentBase;
@@ -14,6 +12,7 @@ use KosmosKosmos\BetterContentEditor\Models\Settings;
 
 class ContentEditor extends ComponentBase {
 
+    public $theme;
     public $content;
     public $defaultFile;
     public $file;
@@ -39,6 +38,11 @@ class ContentEditor extends ComponentBase {
                 'default'     => '',
                 'type'        => 'dropdown'
             ],
+            'remove' => [
+                'title'       => 'Remove file if empty tag',
+                'default'     => true,
+                'type'        => 'checkbox'
+            ],
             'fixture' => [
                 'title'       => 'Content block tag with disabled toolbox',
                 'description' => 'Fixed name for content block, useful for inline texts (headers, spans...)',
@@ -63,6 +67,7 @@ class ContentEditor extends ComponentBase {
 
     public function onRun() {
         $this->renderCount = 0;
+        $this->theme = $this->getTheme();
         if ($this->checkEditor()) {
 
             $this->buttons = Settings::get('enabled_buttons');
@@ -77,13 +82,15 @@ class ContentEditor extends ComponentBase {
     public function onRender() {
         $this->renderCount += 1;
 
-        $this->defaultFile = $this->property('file');
-        $this->file = $this->setFile($this->property('file'));
+        $fileName = str_ends_with(($file = $this->property('file')), '.htm') ? $file : ($file.'.htm');
+        $this->defaultFile = $fileName;
+        $this->file = $this->setFile($fileName);
+
         $content = $this->getFile();
 
         if ($this->checkEditor()) {
-            $this->fixture = $this->property('fixture');
             $this->tools = $this->property('tools');
+            $this->fixture = $this->property('fixture', false);
             $this->class = $this->property('class');
             $this->page['localisations'] = Lang::get('kosmoskosmos.bettercontenteditor::lang.translations');
             $this->page['lang'] = App::getLocale();
@@ -93,37 +100,44 @@ class ContentEditor extends ComponentBase {
             $this->content = $content;
         } else {
             return Cache::remember('bettercontenteditor::content-' . $this->file, now()->addHours(24), function () use ($content) {
+                if (count($availableVars = $this->page->available_vars ?? [])) {
+                    $search = [];
+                    $replace = [];
+                    foreach ($availableVars as $key => $value) {
+                        $search[] = '{{'.$key.'}}';
+                        $replace[] = $value;
+                    }
+                    $content = str_replace($search, $replace, $content);
+                }
                 return $this->renderPartial('@render.htm', ['content' => $content]);
             });
         }
     }
 
     public function onSave() {
+        $this->theme = $this->getTheme();
         if ($this->checkEditor()) {
             $fileName = post('file');
             $contentToSave = post('content');
+            if (trim(strip_tags($contentToSave))) {
+                $fileContent = Content::load($this->theme, $fileName) ?? Content::inTheme($this->theme);
+                $fileContent->fill(['fileName' => $fileName, 'markup' => $contentToSave]);
+                $fileContent->save();
 
-            $fileContent = Content::load($this->getTheme(), $fileName) ?? Content::inTheme($this->getTheme());
-            $fileContent->fill(['fileName' => $fileName, 'markup' => $contentToSave]);
-            $fileContent->save();
-
-            Cache::forget('bettercontenteditor::content-' . $fileName);
+                Cache::forget('bettercontenteditor::content-' . $fileName);
+            } elseif ($this->fileExists($fileName)) {
+                unlink(base_path('themes/'.$this->theme->getDirName().'/content/'.$fileName));
+            }
         }
     }
 
     public function getFile() {
-        if (Content::load($this->getTheme(), $this->file)) {
+        if (Content::load($this->theme, $this->file)) {
             return $this->renderContent($this->file);
-        } else if (Content::load($this->getTheme(), $this->defaultFile)) {
+        } else if (Content::load($this->theme, $this->defaultFile)) {
             return $this->renderContent($this->defaultFile);
         }
         return '';
-    }
-
-    public function onSignout() {
-        BackendAuth::logout();
-        Session::flush();
-        return Redirect::to('/');
     }
 
     public function setFile($file) {
@@ -137,14 +151,14 @@ class ContentEditor extends ComponentBase {
         $translate = \RainLab\Translate\Classes\Translator::instance();
         $defaultLocale = $translate->getDefaultLocale();
         $locale = $translate->getLocale();
+        $multipleLang = count(\RainLab\Translate\Classes\Locale::listEnabled()) > 1;
 
-        // Compability with Rainlab.StaticPage
+        // Compatibility with Rainlab.StaticPage
         // StaticPages content does not append default locale to file.
-        if ($this->fileExists($file) && $locale === $defaultLocale) {
-            return $file;
-        }
+        if ($this->fileExists($file) && $locale === $defaultLocale) return $file;
 
-        return substr_replace($file, '.'.$locale, strrpos($file, '.'), 0);
+        $translateFile = str_replace('.htm', '.'. $locale. '.htm', $file);
+        return !$this->fileExists($translateFile) && !$multipleLang ? $file : $translateFile;
     }
 
     public function checkEditor() {
@@ -157,10 +171,6 @@ class ContentEditor extends ComponentBase {
     }
 
     public function translateExists() {
-        return class_exists('\RainLab\Translate\Classes\Translator');
-    }
-
-    protected function getItemName($file = NULL) {
-        return $this->getTheme()->getDirName() . '.' . ($file ? $file : $this->file);
+        return class_exists('\RainLab\Translate\Classes\Locale');
     }
 }

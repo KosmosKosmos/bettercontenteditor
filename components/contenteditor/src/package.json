@@ -9,19 +9,30 @@
     "author": "DEINNAME",
     "license": "ISC",
     "scripts": {
-        "build": "parcel build contenteditor.js -d ../../../assets --no-source-maps --no-content-hash --experimental-scope-hoisting --public-url ./",
-        "watch": "parcel watch contenteditor.js -d ../../../assets --public-url ./"
+        "build": "parcel build contenteditor.js --dist-dir ../../../assets --no-source-maps",
+        "watch": "parcel watch contenteditor.js --dist-dir ../../../assets --no-source-maps"
+    },
+    "parcel-namer-rewrite": {
+        "chain": "@parcel/namer-default",
+        "rules": {
+            "(.*)\\.(svg|png|gif|jpg)": "images/$1.$2"
+        },
+        "silent": true
     },
     "alias": {
         "vue$": "vue/dist/vue.min.js"
     },
     "devDependencies": {
+        "@parcel/transformer-sass": "^2.8.1",
         "@vue/component-compiler-utils": "^3.1.1",
+        "@parcel/transformer-vue": "^2.8.1",
+        "parcel": "^2.8.1",
         "cssnano": "^4.1.10",
         "sass": "^1.25.0",
         "vue-template-compiler": "^2.6.11"
     },
     "dependencies": {
+        "parcel-namer-rewrite": "^2.0.0-rc.2",
         "@vue/web-component-wrapper": "^1.2.0",
         "uikit": "^3.3.1",
         "vue": "^2.6.11",
