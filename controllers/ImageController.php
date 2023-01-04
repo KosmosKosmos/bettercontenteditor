@@ -38,9 +38,11 @@ class ImageController extends Controller {
 
                 $file = Input::get('file');
                 $key = Input::get('key');
+                Log::info($key);
 
                 $basePath = ltrim(rtrim(Config::get('system.storage.media.path', '/storage/app/media'), '/'), '/');
-                $uploadPath = Settings::get('image_folder') ? Settings::get('image_folder') : 'contenteditor';
+
+                $uploadPath = Settings::get('image_folder') ?? 'contenteditor';
                 $base = $basePath.'/'.$uploadPath;
                 $path = $base.'/'.$file;
                 $pathWithoutFile = substr($path, 0, -strlen(basename($file)));
