@@ -38,6 +38,7 @@ class ImageController extends Controller {
 
                 $file = Input::get('file');
                 $key = Input::get('key');
+                Log::info($key);
 
                 $basePath = ltrim(rtrim(Config::get('system.storage.media.path', '/storage/app/media'), '/'), '/');
 
@@ -55,6 +56,7 @@ class ImageController extends Controller {
                 if ($filePath) {
                     unlink($filePath);
                 }
+                Log::info(base_path($url));
                 file_put_contents(base_path($url), File::get($uploadedFile->getRealPath()));
 
                 list($width, $height) = getimagesize($uploadedFile);

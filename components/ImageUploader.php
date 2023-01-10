@@ -31,7 +31,7 @@ class ImageUploader extends ComponentBase {
 
     public function onRender() {
         $file = $this->property('file');
-        $key = implode('-', $this->getProperties());
+        $key = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', implode('-', $this->getProperties()))));
         $this->page['bce'] = Cache::rememberForever($key, fn() =>$this->getImage($file, $key));
         $this->renderCount += 1;
     }
