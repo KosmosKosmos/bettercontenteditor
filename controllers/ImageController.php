@@ -38,7 +38,6 @@ class ImageController extends Controller {
 
                 $file = Input::get('file');
                 $key = Input::get('key');
-                Log::info($key);
 
                 $basePath = ltrim(rtrim(Config::get('system.storage.media.path', '/storage/app/media'), '/'), '/');
 
