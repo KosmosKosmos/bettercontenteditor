@@ -43,6 +43,9 @@ class ImageController extends Controller {
 
                 $uploadPath = Settings::get('image_folder') ?? 'contenteditor';
                 $base = $basePath.'/'.$uploadPath;
+                if (!file_exists(base_path($base))) {
+                    mkdir(base_path($base));
+                }
                 $path = $base.'/'.$file;
                 $pathWithoutFile = substr($path, 0, -strlen(basename($file)));
                 if (!file_exists(base_path($pathWithoutFile))) {

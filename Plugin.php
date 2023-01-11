@@ -2,19 +2,11 @@
 
 use System\Classes\PluginBase;
 
-/**
- * BetterContentEditor Plugin Information File
- */
-class Plugin extends PluginBase
-{
+class Plugin extends PluginBase {
+
     public $elevated = true;
-#    public $require = ['ToughDeveloper.ImageResizer'];
 
-    public function boot() {
-    }
-
-    public function pluginDetails()
-    {
+    public function pluginDetails() {
         return [
             'name' => 'Better Content Editor',
             'description' => 'Der etwas bessere Content Editor',
@@ -23,16 +15,14 @@ class Plugin extends PluginBase
         ];
     }
 
-    public function registerComponents()
-    {
+    public function registerComponents() {
         return [
             'KosmosKosmos\BetterContentEditor\Components\ImageUploader' => 'imageuploader',
             'KosmosKosmos\BetterContentEditor\Components\ContentEditor' => 'contenteditor',
         ];
     }
 
-    public function registerSettings()
-    {
+    public function registerSettings() {
         return [
             'settings' => [
                 'label' => 'Content Editor Settings',
@@ -45,8 +35,7 @@ class Plugin extends PluginBase
         ];
     }
 
-    public function registerPermissions()
-    {
+    public function registerPermissions() {
         return [
             'kosmoskosmos.bettercontenteditor.editor' => [
                 'tab' => 'Content Editor',

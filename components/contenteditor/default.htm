@@ -16,9 +16,6 @@
 </{% if __SELF__.fixture %}{{ __SELF__.fixture }}{% else %}div{% endif %}>
 
 {% if __SELF__.renderCount == 1 %}
-    {% put styles %}
-    <link rel="stylesheet" href="/plugins/kosmoskosmos/bettercontenteditor/assets/contenteditor.css" />
-    {% endput %}
     {% put scripts %}
     <script type="text/javascript">
         document.lang = '{{ lang }}';

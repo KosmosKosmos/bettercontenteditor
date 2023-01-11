@@ -75,7 +75,7 @@ class ContentEditor extends ComponentBase {
 
             // put content tools js + css
             $this->addCss('assets/content-tools.min.css');
-//            $this->addCss('assets/contenteditor.css');
+            $this->addCss('assets/contenteditor.css');
         }
     }
 
