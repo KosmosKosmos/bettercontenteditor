@@ -1,10 +1,32 @@
 <?php namespace KosmosKosmos\BetterContentEditor;
 
+use Log;
+use Event;
 use System\Classes\PluginBase;
 
 class Plugin extends PluginBase {
 
     public $elevated = true;
+
+    public function boot() {
+        Event::listen('pages.object.fillObject', function ($staticPage, $object, &$objectData, $type) {
+            if ($type != 'page') return;
+            if (isset($objectData['settings']['viewBag']['sections'])) {
+                foreach ($objectData['settings']['viewBag']['sections'] as $sectionId => $section) {
+                    if (isset($section['elements'])) {
+                        foreach ($section['elements'] as $elementId => $element) {
+                            if ($element['id'] == '') {
+                                $objectData['settings']['viewBag']['sections'][$sectionId]['elements'][$elementId]['id'] = uniqid();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        Event::listen('backend.page.beforeDisplay', function($controller, $action, $params) {
+            $controller->addCss('/plugins/kosmoskosmos/bettercontenteditor/assets/backend.css');
+        });
+    }
 
     public function pluginDetails() {
         return [
