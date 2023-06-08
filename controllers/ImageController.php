@@ -30,7 +30,7 @@ class ImageController extends Controller {
                 if (!Input::hasFile('image')) {
                     throw new ApplicationException('File missing from request');
                 }
-                $uploadedFile = Input::file('image')[0];
+                $uploadedFile = is_array(Input::file('image')) ? Input::file('image')[0] : Input::file('image');
                 if (!$uploadedFile->isValid()) {
                     throw new ApplicationException($uploadedFile->getErrorMessage());
                 }
@@ -41,7 +41,7 @@ class ImageController extends Controller {
 
                 $basePath = ltrim(rtrim(Config::get('system.storage.media.path', '/storage/app/media'), '/'), '/');
 
-                $uploadPath = Settings::get('image_folder') ?? 'contenteditor';
+                $uploadPath = Settings::get('image_folder') && Settings::get('image_folder') != '' ? Settings::get('image_folder') : 'contenteditor';
                 $base = $basePath.'/'.$uploadPath;
                 if (!file_exists(base_path($base))) {
                     mkdir(base_path($base));
@@ -101,7 +101,31 @@ class ImageController extends Controller {
                 throw new ApplicationException($uploadedFile->getErrorMessage());
             }
 
-            $path = Settings::get('image_folder', 'contenteditor');
+            $file = $fileName;
+
+            /**************** */
+            $basePath = ltrim(rtrim(Config::get('system.storage.media.path', '/storage/app/media'), '/'), '/');
+
+            $uploadPath = Settings::get('image_folder') && Settings::get('image_folder') != '' ? Settings::get('image_folder') : 'contenteditor';
+
+            $base = $basePath.'/'.$uploadPath;
+            if (!file_exists(base_path($base))) {
+                mkdir(base_path($base));
+            }
+            $path = $base.'/'.$file;
+/*            $pathWithoutFile = substr($path, 0, -strlen(basename($file)));
+            if (!file_exists(base_path($pathWithoutFile))) {
+                mkdir(base_path($pathWithoutFile));
+            }*/
+            $url = $path;
+
+            Log::info(base_path($url));
+            file_put_contents(base_path($url), File::get($uploadedFile->getRealPath()));
+
+            list($width, $height) = getimagesize($uploadedFile);
+            /***** */
+
+/*            $path = Settings::get('image_folder', 'contenteditor');
             $path = MediaLibrary::validatePath($path);
 
             $realPath = empty(trim($uploadedFile->getRealPath()))
@@ -113,11 +137,11 @@ class ImageController extends Controller {
                 File::get($realPath)
             );
 
-            list($width, $height) = getimagesize($uploadedFile);
+            list($width, $height) = getimagesize($uploadedFile);*/
 
             return Response::json([
-                'url'      => MediaLibrary::instance()->getPathUrl($path.'/'.$fileName),
-                'filePath' => $path.'/'.$fileName,
+                'url'      => '/'.$url,
+                'filePath' => $path,
                 'filename' => $fileName,
                 'size'     => [
                    $width,

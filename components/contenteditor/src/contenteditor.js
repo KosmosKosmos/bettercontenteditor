@@ -1,5 +1,4 @@
 import Vue from 'vue$';
-import UIkit from 'uikit';
 import './contenteditor.scss';
 import './samuell.js';
 
