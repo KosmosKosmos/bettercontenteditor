@@ -10,7 +10,7 @@ Vue.config.productionTip = false;
 new Vue({
     delimiters: ['${', '}'],
     data() {
-        return {saving: false, visible: true, history: null, revision: null}
+        return {saving: false, visible: true, history: null}
     },
     mounted() {
         let editor = ContentTools.EditorApp.get();
@@ -78,21 +78,6 @@ new Vue({
                 editor._ignition.show();
             }
         });
-
-        setTimeout(() => {
-            ContentEdit.Root.get().bind('focus', element => {
-                const dataset = element._parent._domElement.dataset;
-                if (dataset.getrevisions) {
-                    this.revision.$children[0].editMode = false;
-                    this.revision.$children[0].file = dataset.file;
-                    this.revision.$children[0].component = dataset.getrevisions;
-                    this.revision.$children[0].isFixture = dataset.fixture !== undefined;
-                    this.revision.$children[0].active = true;
-                } else {
-                    this.revision.$children[0].active = false;
-                }
-            });
-        }, 1000);
     },
     methods: {
         askToClose() {
