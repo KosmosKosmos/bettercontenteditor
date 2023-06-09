@@ -34,6 +34,18 @@ class ImageUploader extends ComponentBase {
         $key = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', implode('-', $this->getProperties()))));
         $this->page['bce'] = Cache::rememberForever($key, fn() =>$this->getImage($file, $key));
         $this->renderCount += 1;
+
+        $this->setProperty('class', null);
+        $this->setProperty('tag', null);
+        $this->setProperty('leaveOpen', null);
+        $this->setProperty('attributes', null);
+        $this->setProperty('default', null);
+        $this->setProperty('mode', null);
+        $this->setProperty('height', null);
+        $this->setProperty('width', null);
+        $this->setProperty('quality', null);
+        $this->setProperty('size', null);
+        echo $this->property('leaveOpen') == true;
     }
 
     private function getImage($file, $key) {
@@ -82,16 +94,6 @@ class ImageUploader extends ComponentBase {
             'fileName' => $fileName,
             'attributes' => $this->property('attributes')
         ];
-        $this->setProperty('class', null);
-        $this->setProperty('tag', null);
-        $this->setProperty('leaveOpen', null);
-        $this->setProperty('attributes', null);
-        $this->setProperty('default', null);
-        $this->setProperty('mode', null);
-        $this->setProperty('height', null);
-        $this->setProperty('width', null);
-        $this->setProperty('quality', null);
-        $this->setProperty('size', null);
 
         return $result;
     }
