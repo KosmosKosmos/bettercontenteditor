@@ -92,6 +92,8 @@ class ContentEditor extends ComponentBase {
             $this->tools = $this->property('tools');
             $this->fixture = $this->property('fixture', false);
             $this->class = $this->property('class');
+            $this->setProperty('class', false);
+            $this->setProperty('fixture', false);
             $this->page['localisations'] = Lang::get('kosmoskosmos.bettercontenteditor::lang.translations');
             $this->page['lang'] = App::getLocale();
             if ($this->page['lang'] !== 'en') {
