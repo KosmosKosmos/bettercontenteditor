@@ -8,3 +8,4 @@
 2.0.3: Fix problem with cache key for images
 2.0.4: Remove UIkit inclusion - use it globally
 2.0.5: Fix problem with changing properties
+2.0.6: Also fix same problem for image-uploader

@@ -82,6 +82,17 @@ class ImageUploader extends ComponentBase {
             'fileName' => $fileName,
             'attributes' => $this->property('attributes')
         ];
+        $this->setProperty('class', null);
+        $this->setProperty('tag', null);
+        $this->setProperty('leaveOpen', null);
+        $this->setProperty('attributes', null);
+        $this->setProperty('default', null);
+        $this->setProperty('mode', null);
+        $this->setProperty('height', null);
+        $this->setProperty('width', null);
+        $this->setProperty('quality', null);
+        $this->setProperty('size', null);
+
         return $result;
     }
 }

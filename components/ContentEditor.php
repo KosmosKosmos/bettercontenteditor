@@ -16,7 +16,7 @@ class ContentEditor extends ComponentBase {
     public $content;
     public $defaultFile;
     public $file;
-    public $fixture;
+    public $tag;
     public $tools;
     public $class;
     public $buttons;
@@ -90,9 +90,11 @@ class ContentEditor extends ComponentBase {
 
         if ($this->checkEditor()) {
             $this->tools = $this->property('tools');
-            $this->fixture = $this->property('fixture', false);
+            $fixture = $this->property('fixture', false);
+            $this->tag = $fixture ?? $this->property('tag', false);
             $this->class = $this->property('class');
             $this->setProperty('class', false);
+            $this->setProperty('tag', false);
             $this->setProperty('fixture', false);
             $this->page['localisations'] = Lang::get('kosmoskosmos.bettercontenteditor::lang.translations');
             $this->page['lang'] = App::getLocale();
