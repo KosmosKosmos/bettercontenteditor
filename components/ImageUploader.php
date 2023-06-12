@@ -5,6 +5,7 @@ use Str;
 use Cache;
 use Config;
 use Resizer;
+use File;
 use BackendAuth;
 use Cms\Classes\ComponentBase;
 use KosmosKosmos\BetterContentEditor\Models\Settings;
@@ -55,14 +56,23 @@ class ImageUploader extends ComponentBase {
         $path = $base.'/'.$file;
         $files = glob($path.'.*');
         $filePath = count($files) ? $files[0] : null;
-
         if ($filePath) {
             $width = $this->property('width') ?? ($this->property('size') ?? 1600);
             $height = $this->property('height');
             $mode = $this->property('mode') ?? 'auto';
             $quality = $this->property('quality') ?? 90;
             if (Str::endsWith($filePath, '.svg')) {
-                $fileName = trrim($filePath, strrpos($filePath, '/') + 1);
+                $fileName = $this->property('fileName') ?? basename($filePath);
+                $fileUrl = ltrim((Config::get('system.storage_path') ?? '/storage'), '/').'/temp/public/'.$file.'.svg';
+                $pathWithoutFile = substr($fileUrl, 0, -strlen(basename($fileName)));
+                if (!file_exists(base_path($pathWithoutFile))) {
+                    mkdir(base_path($pathWithoutFile));
+                }
+                if (file_exists(base_path($fileUrl))) {
+                    unlink(base_path($fileUrl));
+                }
+                File::copy($path.'.svg', base_path($fileUrl));
+                $image = '/'.$fileUrl.'?timestamp='.time();
             } else {
                 $fileName = $this->property('fileName') ?? basename($filePath);
                 $suffix = '.'.pathinfo($fileName)['extension'];

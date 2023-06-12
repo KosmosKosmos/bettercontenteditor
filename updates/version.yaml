@@ -10,3 +10,4 @@
 2.0.5: Fix problem with changing properties
 2.0.6: Also fix same problem for image-uploader
 2.0.7: Fix problem with multiple attributes
+2.0.8: Fix problem with svg files
