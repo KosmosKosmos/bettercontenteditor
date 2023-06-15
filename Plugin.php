@@ -14,7 +14,7 @@ class Plugin extends PluginBase {
             if (isset($objectData['settings']['viewBag']['sections'])) {
                 foreach ($objectData['settings']['viewBag']['sections'] as $sectionId => $section) {
                     if (isset($section['elements'])) {
-                        if (!$section['id']) {
+                        if (!isset($section['id']) || !$section['id']) {
                             $objectData['settings']['viewBag']['sections'][$sectionId]['id'] = uniqid();
                         }
                         foreach ($section['elements'] as $elementId => $element) {
