@@ -2,6 +2,7 @@
 
 use Log;
 use Event;
+use Cms\Classes\Theme;
 use System\Classes\PluginBase;
 
 class Plugin extends PluginBase {
@@ -11,24 +12,27 @@ class Plugin extends PluginBase {
     public function boot() {
         Event::listen('pages.object.fillObject', function ($staticPage, $object, &$objectData, $type) {
             if ($type != 'page') return;
-            if (isset($objectData['settings']['viewBag']['sections'])) {
-                foreach ($objectData['settings']['viewBag']['sections'] as $sectionId => $section) {
-                    if (isset($section['elements'])) {
-                        if (!isset($section['id']) || !$section['id']) {
-                            $objectData['settings']['viewBag']['sections'][$sectionId]['id'] = uniqid();
-                        }
-                        foreach ($section['elements'] as $elementId => $element) {
-                            if (!$element['id']) {
-                                $objectData['settings']['viewBag']['sections'][$sectionId]['elements'][$elementId]['id'] = uniqid();
-                            }
-                        }
-                    }
-                }
-            }
+            $objectData['settings']['viewBag'] = $this->setIds($objectData['settings']['viewBag']);
         });
         Event::listen('backend.page.beforeDisplay', function($controller, $action, $params) {
+            $themeBackendCss = '/themes/'.Theme::getActiveTheme()->getDirName().'/assets/styles/backend.css';
+            if (file_exists(base_path($themeBackendCss))) {
+                $controller->addCss($themeBackendCss);
+            }
             $controller->addCss('/plugins/kosmoskosmos/bettercontenteditor/assets/backend.css');
         });
+    }
+
+    protected function setIds(&$elements) {
+        if (isset($elements['id']) && !$elements['id']) {
+            $elements['id'] = uniqid();
+        }
+        foreach ($elements as $elementId => $element) {
+            if (is_array($element)) {
+                $elements[$elementId] = $this->setIds($element);
+            }
+        }
+        return $elements;
     }
 
     public function pluginDetails() {
