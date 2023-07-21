@@ -4,6 +4,7 @@ use Log;
 use Event;
 use Cms\Classes\Theme;
 use System\Classes\PluginBase;
+use RainLab\Pages\Classes\Page as StaticPage;
 
 class Plugin extends PluginBase {
 
@@ -15,11 +16,13 @@ class Plugin extends PluginBase {
             $objectData['settings']['viewBag'] = $this->setIds($objectData['settings']['viewBag']);
         });
         Event::listen('backend.page.beforeDisplay', function($controller, $action, $params) {
-            $themeBackendCss = '/themes/'.Theme::getActiveTheme()->getDirName().'/assets/styles/backend.css';
-            if (file_exists(base_path($themeBackendCss))) {
-                $controller->addCss($themeBackendCss);
+            if (Theme::getActiveTheme()) {
+                $themeBackendCss = '/themes/' . Theme::getActiveTheme()->getDirName() . '/assets/styles/backend.css';
+                if (file_exists(base_path($themeBackendCss))) {
+                    $controller->addCss($themeBackendCss);
+                }
+                $controller->addCss('/plugins/kosmoskosmos/bettercontenteditor/assets/backend.css');
             }
-            $controller->addCss('/plugins/kosmoskosmos/bettercontenteditor/assets/backend.css');
         });
     }
 

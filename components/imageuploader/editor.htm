@@ -11,9 +11,8 @@
 
     <{{bce.tag}} id="{{bce.item}}" data-key="{{bce.key}}" {{bce.attributes|raw}} class="js-upload uk-text-center {{bce.classes}}" style="background-image: url({{ bce.image }});">
         {% partial __SELF__~'::uploader' %}
-        {% if not bce.leaveOpen %}
+    {% if not bce.leaveOpen %}
     </{{bce.tag}}>
-
     {% endif %}
 
 {% endif %}

@@ -88,10 +88,10 @@ class ContentEditor extends ComponentBase {
 
         $content = $this->getFile();
 
+        $fixture = $this->property('fixture', false);
+        $this->tag = $fixture ?? $this->property('tag', false);
         if ($this->checkEditor()) {
             $this->tools = $this->property('tools');
-            $fixture = $this->property('fixture', false);
-            $this->tag = $fixture ?? $this->property('tag', false);
             $this->class = $this->property('class');
             $this->setProperty('class', false);
             $this->setProperty('tag', false);

@@ -13,3 +13,6 @@
 2.0.8: Fix problem with svg files
 2.0.9: Fix problem missing id while adding static pages
 2.0.10: Better setting ids for static pages
+2.1.0:
+    - Fix problem with tags (fixture)
+    - Add backend css file to work better with static pages grid layout

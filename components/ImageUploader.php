@@ -33,7 +33,7 @@ class ImageUploader extends ComponentBase {
     public function onRender() {
         $file = $this->property('file');
         $key = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', implode('-', $this->getProperties()))));
-        $this->page['bce'] = Cache::rememberForever($key, fn() =>$this->getImage($file, $key));
+        $this->page['bce'] = Cache::rememberForever($key, fn() => $this->getImage($file, $key));
         $this->renderCount += 1;
 
         $this->setProperty('class', null);
@@ -46,7 +46,6 @@ class ImageUploader extends ComponentBase {
         $this->setProperty('width', null);
         $this->setProperty('quality', null);
         $this->setProperty('size', null);
-        echo $this->property('leaveOpen') == true;
     }
 
     private function getImage($file, $key) {
